@@ -19,7 +19,7 @@
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
-plt.rcParams['figure.figsize'] = [4.0, 3.0]
+
 import hela_data
 
 import config

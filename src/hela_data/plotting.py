@@ -10,7 +10,7 @@ import pandas as pd
 seaborn.set_style("whitegrid")
 # seaborn.set_theme()
 
-plt.rcParams['figure.figsize'] = [16.0, 7.0]  # [4, 2], [4, 3]
+plt.rcParams['figure.figsize'] = [4.0, 3.0]  # [4, 2], [4, 3]
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
