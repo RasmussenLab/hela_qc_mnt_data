@@ -1,5 +1,3 @@
-# %%
-
 # %% [markdown]
 # ## Output Excel for Analysis
 
@@ -14,7 +12,7 @@ from hela_data.io import thermo_raw_files
 import hela_data.pandas
 
 plt.rcParams['figure.figsize'] = [4, 3]
-hela_data.plotting.make_large_descriptors(5)
+hela_data.plotting.make_large_descriptors(8)
 
 
 # %% [tags=["parameters"]]
@@ -27,7 +25,7 @@ out_folder: str = 'data/dev_datasets/pride_upload'
 
 # %%
 out_folder = Path(out_folder)
-out_folder.mkdir(exist_ok=True)
+out_folder.mkdir(exist_ok=True, parents=True)
 files_out = dict()
 
 # %%
@@ -35,7 +33,6 @@ df_meta = pd.read_csv(fn_meta, index_col=0)
 df_meta
 
 # %%
-
 df_meta['instrument_label'] = (
     df_meta["Thermo Scientific instrument model"].str.replace(' ', '-')
     + '_'
@@ -179,6 +176,7 @@ hela_data.savefig(fig, fname)
 # ## File size and number of identifications
 
 # %%
+hela_data.plotting.make_large_descriptors(7)
 cols = ['Peptide Sequences Identified', 'size_gb']
 
 mask = ((df_meta[cols[0]] < 20_000) & (df_meta[cols[1]] > 3.5)
@@ -220,7 +218,7 @@ cols = ['Number of MS1 spectra', 'Number of MS2 spectra',
         'Peptide Sequences Identified']
 cols = hela_data.pandas.get_columns_accessor_from_iterable(cols)
 
-view = df_meta.loc[mask_top10_instruments]
+view = df_meta.loc[mask_top10_instruments].copy()
 view["instrument_label+N"] = view["instrument_label"].replace(
     counts_instrument.to_frame().apply(
         lambda s: f"{s.name} (N={s['count']:03d})", axis=1))
@@ -237,8 +235,8 @@ ax = seaborn.scatterplot(view,
                          ax=ax,
                          s=5,
                          palette='deep')
-_ = ax.legend(fontsize=5,
-              title_fontsize=5,
+_ = ax.legend(fontsize=6,
+              title_fontsize=7,
               markerscale=0.4,
               title='instrument label',
               loc='upper right',
@@ -252,6 +250,7 @@ hela_data.savefig(fig, fname)
 
 
 # %%
+hela_data.plotting.make_large_descriptors(6)
 fig, ax = plt.subplots()
 ax = view.plot.scatter(x=cols.Peptide_Sequences_Identified,
                        y=cols.Number_of_MS1_spectra,
@@ -278,6 +277,7 @@ hela_data.savefig(fig, fname)
 df_meta.filter(like='RT', axis=1).describe()
 
 # %%
+hela_data.plotting.make_large_descriptors(7)
 cols = ['MS max RT',
         'Peptide Sequences Identified']
 cols = hela_data.pandas.get_columns_accessor_from_iterable(cols)
@@ -294,7 +294,7 @@ ax = seaborn.scatterplot(
     s=5,
     palette='deep')
 _ = ax.legend(fontsize=5,
-              title_fontsize=5,
+              title_fontsize=6,
               markerscale=0.4,
               title='instrument label',
               )
