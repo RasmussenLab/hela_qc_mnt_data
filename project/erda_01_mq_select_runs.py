@@ -49,6 +49,7 @@ from config import FOLDER_MQ_TXT_DATA, FOLDER_PROCESSED
 from hela_data.log import setup_nb_logger
 setup_nb_logger()
 logger = logging.getLogger()
+_ = logging.getLogger('fontTools').setLevel(logging.WARNING)
 
 logging.info('Start with handlers: \n' + "\n".join(f"- {repr(log_)}" for log_ in logger.handlers))
 
@@ -60,25 +61,30 @@ logging.info('Start with handlers: \n' + "\n".join(f"- {repr(log_)}" for log_ in
 ##################
 
 ELIGABLE_FILES_YAML = Path('config/eligable_files.yaml')
-MAP_FOLDER_PATH = Path('config/file_paths')
+ELIGABLE_FILE_PATHS = Path('config/file_paths')
 FPATH_ALL_SUMMARIES = FOLDER_PROCESSED / 'all_summaries.json'
 FN_RAWFILE_METADATA = 'data/rawfile_metadata.csv'
 
 logger.info(f"Search Raw-Files on path: {FOLDER_MQ_TXT_DATA}")
 
 # %%
-folders = [folder for folder in Path(FOLDER_MQ_TXT_DATA).iterdir() if folder.is_dir()
-           and not folder.name.startswith('.')]
+# Initally query folders once
+# folders = [folder for folder in Path(FOLDER_MQ_TXT_DATA).iterdir() if folder.is_dir()
+#            and not folder.name.startswith('.')]
+
+with open(ELIGABLE_FILES_YAML) as f:
+    folders = yaml.safe_load(f)['files']
+    folders = [FOLDER_MQ_TXT_DATA  / folder for folder in folders]
+folders[:10]
 
 # %%
 folders_dict = {folder.name: folder for folder in sorted(folders)}
 assert len(folders_dict) == len(folders), "Non unique file names"
 
-with open(MAP_FOLDER_PATH, 'w') as f:
+with open(ELIGABLE_FILE_PATHS, 'w') as f:
     yaml.dump({k: str(PurePosixPath(v)) for k, v in folders_dict.items()}, f)
-logger.info(f"Save map of file names to file paths to: {str(MAP_FOLDER_PATH)}")
+logger.info(f"Save map of file names to file paths to: {str(ELIGABLE_FILE_PATHS)}")
 
-# w_file = widgets.Dropdown(options=[folder for folder in folders], description='View files')
 w_file = widgets.Dropdown(options=folders_dict, description='View files')
 w_file
 
@@ -100,6 +106,7 @@ print(f"Results will be saved in subfolders in\n\t{str(FOLDER_PROCESSED.absolute
 # %%time
 pd.options.display.max_columns = 49
 mq_all_summaries = MqAllSummaries(FPATH_ALL_SUMMARIES)
+logger.info(f"{FPATH_ALL_SUMMARIES = }")
 mq_all_summaries.load_new_samples(folders=folders)
 
 # %%
@@ -155,12 +162,13 @@ MS_spectra.loc[idx_selected]
 # - based on metadata
 
 # %%
-df_meta_rawfiles = pd.read_csv(FN_RAWFILE_METADATA, header=[0, 1], index_col=0)
+df_meta_rawfiles = pd.read_csv(FN_RAWFILE_METADATA, header=[0, 1], index_col=0, low_memory=False)
 date_col = ('FileProperties', 'Content Creation Date')
 df_meta_rawfiles[date_col] = pd.to_datetime(
     df_meta_rawfiles[date_col])
 df_meta_rawfiles = df_meta_rawfiles.loc[idx_selected]
 df_meta_rawfiles.sort_values(date_col, inplace=True)
+df_meta_rawfiles
 
 # %%
 w_date_range = widgets.SelectionRangeSlider(options=df_meta_rawfiles[date_col], value=[
