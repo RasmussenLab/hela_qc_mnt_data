@@ -36,6 +36,7 @@ sel = (parameter_files
        .loc[id_mappings.index]
        .drop('filePaths', axis=1)
        .rename(id_mappings['new_sample_id']))
+print(f"{fname_out = }")
 sel.to_csv(fname_out)
 sel
 
@@ -57,3 +58,5 @@ sel[('numThreads', 'nan', 'nan', 'nan')].value_counts()
 # 388 columns are identical
 sel.drop(sel_with_diffs.columns, axis=1
          ).drop_duplicates()
+
+# %%

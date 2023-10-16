@@ -60,9 +60,8 @@ def extend_tuples_with_none(list_of_tuples, target_length):
 list_of_tuples = [(1, 2), (3, 4, 5), (6,)]
 extend_tuples_with_none(list_of_tuples, 3)
 
+
 # %%
-
-
 def add_record(data, tag, record):
     if tag in data:
         if isinstance(data[tag], list):
@@ -101,9 +100,8 @@ root = tree.getroot()
 record_example = read_xml_record(root)
 record_example
 
+
 # %%
-
-
 def flatten_dict_of_dicts(d: dict, parent_key: str = '') -> dict:
     """Build tuples for nested dictionaries for use as `pandas.MultiIndex`.
 
@@ -255,8 +253,8 @@ parameter_files = pd.concat([parameter_files_part_1, parameter_files_part_2])
 # del parameter_files_part_1, parameter_files_part_2
 parameter_files
 
-# %%
-# 11066
+# %% [markdown]
+# 11066 parameter files
 
 # %%
 parameter_files = parameter_files.infer_objects()
@@ -264,6 +262,7 @@ parameter_files.dtypes.value_counts()
 
 # %%
 parameter_files.to_csv(fname_out)
+fname_out
 
 # %% [markdown]
 # Read aggregated parameters dump
