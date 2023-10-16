@@ -1,6 +1,14 @@
+# Project
+
+The folder contains the notebooks used for transforming the MaxQuant output data (see workflow in root of repository) stored on a long term file storage system. The data
+could be manipulated through a Jupyter Hub instance, and the execution was thus done through notebooks.
+The rawfile metadata from the workflow extracting this information (see workflow in root of repository), was added. 
+
+See the README's in `config` and `data` for minimum files which need to be present. The notebooks are mainly for documentation and 
+re-execution for the authors, but applying it to other data, should possible with updates.
 
 ## Notebooks
-- erda: Is the longterm storage of the university -> MQ output was processed on a server attached to erda
+- erda: Is the longterm storage of the university -> MaxQuant output was processed on a server attached to erda
 - hela: dumps from erda processing (raw file names, aggregated `summaries.txt` from MQ, protein groups, peptides and precursor dumps)
 
 tag | notebook  | Description
@@ -16,6 +24,7 @@ hela | 00_0_hela_metadata_rawfiles.ipynb         |  Analyze rawfile metadata and
 hela | 00_1_hela_MQ_summaries.ipynb              | Analyzse summaries.txt data from all samples
 hela | 00_2_hela_all_raw_files.ipynb             | Find duplicate raw files, analyze sizes
 hela | 00_3_hela_selected_files_overview.ipynb   | Data description based on file size and metaddata of selected files
+hela | 00_3_1_pride_metadata_analysis.ipynb      | **Analysis for Data Descriptor paper of uploaded metadata (Figure 2)** 
 hela | 00_4_hela_development_dataset_splitting   | Splitting data into development datasets of HeLa cell line data (based on wide format input from `erda_03` and `erda_04`)
 Single development dataset |
 hela | 00_5_hela_development_dataset_support.ipynb    | Support of training data samples/feat on selected development data set

@@ -41,6 +41,21 @@ setup_nb_logger()
 
 logging.info(f"Search Raw-Files on path: {FOLDER_MQ_TXT_DATA}")
 
+
+def rename_dumps(counter, ids):
+    for k, v in tqdm(counter.dumps.copy().items()):
+        old_name = v
+        new_key = ids.loc[k, 'new_sample_id']
+        new_name = v.parent / (new_key + '.csv')
+        try:
+            os.rename(old_name, new_name)
+            del counter.dumps[k]
+            counter.dumps[new_key] = new_name
+        except FileNotFoundError:
+            logging.warning(f"File not found: {old_name}")
+    counter.save()
+
+
 # %% [markdown]
 # Use samples previously loaded. Specified MQ output folders are in `eligable_files.yaml`
 #
@@ -92,8 +107,7 @@ len(folders)
 
 # %%
 OVERWRITE = False
-OVERWRITE = True
-
+OVERWRITE = True # statefulness does not make sense when files need to be renamed.
 
 FNAME_C_PEPTIDES, FNAME_C_EVIDENCE, FNAME_C_PG, FNAME_C_GENES
 
@@ -154,13 +168,7 @@ else:
 c = peptide_counter.sum_over_files(folders=folders)
 
 # %%
-for k, v in tqdm(peptide_counter.dumps.items()):
-    old_name = v
-    new_name = v.parent / (df_ids.loc[k, 'new_sample_id'] + '.csv')
-    try:
-        os.rename(old_name, new_name)
-    except FileNotFoundError:
-        logging.warning(f"File not found: {old_name}")
+rename_dumps(peptide_counter, df_ids)
 
 # %%
 c.most_common(10)  # peptide_counter.counter.most_common(10)
@@ -168,7 +176,7 @@ c.most_common(10)  # peptide_counter.counter.most_common(10)
 # %%
 # To share as python file
 N = 1000
-with open(FOLDER_PROCESSED / f'most_common_{10}_peptides.py', 'w') as f:
+with open(FOLDER_PROCESSED / f'most_common_{N}_peptides.py', 'w') as f:
     f.write('import pandas as pd\n\n')
 
     # pprint.pformat list -> do this using standardlibrary
@@ -288,13 +296,7 @@ evidence_counter = hela_data.io.data_objects.EvidenceCounter(FNAME_C_EVIDENCE, o
 c = evidence_counter.sum_over_files(folders=folders)
 
 # %%
-for k, v in tqdm(evidence_counter.dumps.items()):
-    old_name = v
-    new_name = v.parent / (df_ids.loc[k, 'new_sample_id'] + '.csv')
-    try:
-        os.rename(old_name, new_name)
-    except FileNotFoundError:
-        logging.warning(f"File not found: {old_name}")
+rename_dumps(evidence_counter, df_ids)
 
 # %% [markdown]
 # ## Protein Groups
@@ -433,13 +435,7 @@ protein_groups_counter = hela_data.io.data_objects.ProteinGroupsCounter(FNAME_C_
 c = protein_groups_counter.sum_over_files(folders=folders)
 
 # %%
-for k, v in tqdm(protein_groups_counter.dumps.items()):
-    old_name = v
-    new_name = v.parent / (df_ids.loc[k, 'new_sample_id'] + '.csv')
-    try:
-        os.rename(old_name, new_name)
-    except FileNotFoundError:
-        logging.warning(f"File not found: {old_name}")
+rename_dumps(protein_groups_counter, df_ids)
 
 # %% [markdown]
 # Over 400,000 protein groups were only identified once (as exactly this group).

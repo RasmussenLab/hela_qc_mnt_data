@@ -62,6 +62,7 @@ FN_ID_OLD_NEW: str = 'data/rename/selected_old_new_id_mapping.csv'  # selected s
 # options = ['peptides', 'evidence', 'proteinGroups']
 # from config.training_data import evidence as cfg
 # from config.training_data import proteinGroups as cfg
+from config.training_data import geneGroups as cfg
 
 cfg_dict = {k: getattr(cfg, k) for k in dir(cfg) if not k.startswith('_')}
 cfg_dict
@@ -97,7 +98,7 @@ out_folder.mkdir(exist_ok=True, parents=True)
 # - path are to `.raw` raw files, not the output folder (could be changed)
 
 # %%
-df_ids = pd.read_csv(FN_ID_OLD_NEW)
+df_ids = pd.read_csv(FN_ID_OLD_NEW, index_col='Sample ID')
 df_ids
 
 # %% [markdown]
@@ -134,9 +135,12 @@ IDX_selected
 # ## Select Dumps
 
 # %%
-selected_dumps = df_ids["Sample ID"]
-selected_dumps = {k: counter.dumps[k] for k in selected_dumps}
-selected_dumps = list(selected_dumps.items())
+# selected_dumps = df_ids.index
+# selected_dumps = {df_ids.loc[k, 'new_sample_id']:
+#                   counter.dumps[k]  #! could be updated in Counter.
+#                   for k in selected_dumps}
+# selected_dumps = list(selected_dumps.items())
+selected_dumps = list(counter.dumps.items())
 print(f"Selected # {len(selected_dumps):,d} dumps.")
 selected_dumps[:10]
 
@@ -212,8 +216,6 @@ all
 all.memory_usage(deep=True).sum() / (2**20)
 
 # %%
-# all = pd.read_pickle('data/selected/proteinGroups/intensities_wide_selected_N00100_M07444.pkl')
-all = all.rename(df_ids.set_index("Sample ID")['new_sample_id'], axis=1)
 all.head()
 
 # %%

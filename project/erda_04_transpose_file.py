@@ -18,7 +18,8 @@
 # %%
 from pathlib import Path
 import pandas as pd
-
+import matplotlib.pyplot as plt
+plt.rcParams['figure.figsize'] = [4.0, 3.0]
 import hela_data
 
 import config
@@ -28,13 +29,13 @@ import config
 
 # %%
 # out_folder = Path('data/selected/proteinGroups')
-# fname = out_folder / 'intensities_wide_selected_N04550_M07444.pkl'
+# fname = out_folder / 'intensities_wide_selected_N04547_M07444.pkl'
 
 # out_folder = Path('data/selected/peptides')
-# fname = out_folder / 'intensities_wide_selected_N42881_M07441.pkl'
+# fname = out_folder / 'intensities_wide_selected_N42723_M07444.pkl'
 
 out_folder = Path('data/selected/evidence')
-fname = out_folder / 'intensities_wide_selected_N49560_M07444.pkl'
+fname = out_folder / 'intensities_wide_selected_N49339_M07444.pkl'
 
 
 # %%
@@ -80,7 +81,7 @@ count_samples = df.notna().sum()
 fname = out_folder / 'count_samples.json'
 count_samples.to_json(fname)
 
-hela_data.plotting.make_large_descriptors(size='medium')
+hela_data.plotting.make_large_descriptors(size=8)
 
 ax = count_samples.sort_values().plot(rot=90, ylabel='observations')
 ax.yaxis.set_major_formatter("{x:,.0f}")

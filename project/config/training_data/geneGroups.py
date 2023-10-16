@@ -1,4 +1,4 @@
-from ..counter_fpaths import FNAME_C_PG  # use genes as identifier between samples
+from ..counter_fpaths import FNAME_C_GENES  # use genes as identifier between samples
 from hela_data.io import data_objects
 
 NAME = 'proteinGroups'
@@ -11,10 +11,10 @@ TYPES_DUMP = {'Sample ID': 'category',
 
 TYPES_COUNT = {}
 
-IDX_COLS_LONG = ['Sample ID', 'Protein IDs']  # in order
+IDX_COLS_LONG = ['Sample ID', 'Gene names']  # in order
 
 LOAD_DUMP = data_objects.pg_idx_gene_fct
 
-CounterClass = data_objects.ProteinGroupsCounter
+CounterClass = data_objects.GeneCounter
 
-FNAME_COUNTER = FNAME_C_PG
+FNAME_COUNTER = FNAME_C_GENES
