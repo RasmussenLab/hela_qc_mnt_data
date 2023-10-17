@@ -36,7 +36,6 @@ from tqdm.notebook import tqdm_notebook
 import hela_data
 
 import config
-from config.training_data import peptides as cfg
 
 
 def join_as_str(seq):
@@ -59,7 +58,8 @@ FN_ID_OLD_NEW: str = 'data/rename/selected_old_new_id_mapping.csv'  # selected s
 # Select a specific config file
 
 # %%
-# options = ['peptides', 'evidence', 'proteinGroups']
+# options = ['evidence', 'peptides', 'proteinGroups', 'geneGroups']
+# from config.training_data import peptides as cfg
 # from config.training_data import evidence as cfg
 # from config.training_data import proteinGroups as cfg
 from config.training_data import geneGroups as cfg

@@ -1,7 +1,7 @@
 from ..counter_fpaths import FNAME_C_GENES  # use genes as identifier between samples
 from hela_data.io import data_objects
 
-NAME = 'proteinGroups'
+NAME = 'geneGroups'
 
 BASE_NAME = f"df_intensities_{NAME}_long"
 

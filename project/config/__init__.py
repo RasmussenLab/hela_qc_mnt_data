@@ -174,7 +174,7 @@ def insert_shape(df: pandas.DataFrame, template: str = "filename{}.txt", shape=N
 ###############################################################################
 # configure plotting
 # https://matplotlib.org/stable/users/dflt_style_changes.html
-mpl.rcParams['figure.figsize'] = [10.0, 8.0]
+# mpl.rcParams['figure.figsize'] = [10.0, 8.0]
 
 # cfg.keys.gene_name
 # cfg.paths.processed

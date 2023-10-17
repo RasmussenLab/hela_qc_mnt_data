@@ -28,15 +28,17 @@ import config
 # Paramters
 
 # %%
+out_folder = Path('data/selected/geneGroups')
+fname = out_folder / 'intensities_wide_selected_N04547_M07444.pkl'
+
 # out_folder = Path('data/selected/proteinGroups')
-# fname = out_folder / 'intensities_wide_selected_N04547_M07444.pkl'
+# fname = out_folder / 'intensities_wide_selected_N03060_M07444.pkl'
 
 # out_folder = Path('data/selected/peptides')
 # fname = out_folder / 'intensities_wide_selected_N42723_M07444.pkl'
 
-out_folder = Path('data/selected/evidence')
-fname = out_folder / 'intensities_wide_selected_N49339_M07444.pkl'
-
+# out_folder = Path('data/selected/evidence')
+# fname = out_folder / 'intensities_wide_selected_N49339_M07444.pkl'
 
 # %%
 def get_template(fname, split='_N'):
@@ -78,7 +80,8 @@ df.memory_usage(deep=True).sum() / (2**20)
 # %%time
 count_samples = df.notna().sum()
 
-fname = out_folder / 'count_samples.json'
+fname = out_folder / 'count_samples{suffix}.json'.format(
+    suffix=config.insert_shape(df, template=template))
 count_samples.to_json(fname)
 
 hela_data.plotting.make_large_descriptors(size=8)
@@ -106,7 +109,8 @@ df.to_csv(fname, chunksize=1_000)
 
 # %%
 count_features = df.notna().sum()
-fname = out_folder / 'count_feat.json'
+fname = out_folder / 'count_feat{suffix}.json'.format(
+    suffix=config.insert_shape(df, template=template))
 count_features.to_json(fname)
 
 ax = count_features.sort_values().plot(rot=90, ylabel='observations')
@@ -137,3 +141,5 @@ df.replace(0, pd.NA).to_csv(fname.with_suffix('.csv'), chunksize=1_000)
 
 # %%
 files_out
+
+# %%
