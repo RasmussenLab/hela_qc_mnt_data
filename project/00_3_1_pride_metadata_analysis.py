@@ -11,7 +11,7 @@ import seaborn
 from hela_data.io import thermo_raw_files
 import hela_data.pandas
 
-hela_data.plotting.make_large_descriptors(8)
+hela_data.plotting.make_large_descriptors(6)
 
 
 # %% [tags=["parameters"]]
