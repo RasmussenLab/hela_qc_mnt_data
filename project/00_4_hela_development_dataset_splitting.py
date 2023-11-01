@@ -19,6 +19,7 @@
 # - drop some samples based on quality criteria
 
 # %%
+import logging
 from pathlib import Path
 
 import numpy as np
@@ -27,7 +28,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates
 import seaborn as sns
-
+from IPython.display import display
 import umap
 
 from hela_data.io import thermo_raw_files
@@ -41,7 +42,7 @@ import hela_data.io.filenames
 from hela_data.log import setup_nb_logger
 
 logger = setup_nb_logger()
-
+logging.getLogger('fontTools').setLevel(logging.WARNING)
 FOLDER_DATA = defaults.FOLDER_DATA
 
 # %%
@@ -53,18 +54,16 @@ FIGSIZE = (15, 10)
 
 # %% tags=["parameters"]
 N_MIN_INSTRUMENT = 300
-META_DATA: str = 'data/files_selected_metadata.csv'
+META_DATA: str = 'data/pride_metadata.csv'
 FILE_EXT = 'pkl'  # 'csv' or 'pkl'
 SAMPLE_ID = 'Sample ID'
 
-DUMP: str = erda_dumps.FN_PROTEIN_GROUPS  # Filepath to erda dump
-OUT_NAME = 'protein group'  # for legends labels
+# DUMP: str = erda_dumps.FN_PROTEIN_GROUPS  # Filepath to erda dump
 # DUMP: str = erda_dumps.FN_PEPTIDES
-# OUT_NAME = 'peptide' # for legends labels
-# DUMP: str = erda_dumps.FN_EVIDENCE
-# OUT_NAME = 'precursor' # for legends labels
+DUMP: str = erda_dumps.FN_EVIDENCE
 
-FOLDER_DATASETS: str = f'dev_datasets/{DUMP.stem}'
+
+FOLDER_DATASETS: str = f'dev_datasets/{DUMP.parent.stem}/{DUMP.stem}'
 
 INSTRUMENT_LEGEND_TITLE = 'Q Exactive HF-X Orbitrap'
 
@@ -77,6 +76,8 @@ INSTRUMENT_LEGEND_TITLE = 'Q Exactive HF-X Orbitrap'
 # %%
 DUMP = Path(DUMP)  # set parameter from cli or yaml to Path
 FOLDER_DATASETS = defaults.FOLDER_DATA / FOLDER_DATASETS
+OUT_NAME = FOLDER_DATASETS.parent.stem
+logger.info(f"Feature level name selected based on parent folder: {OUT_NAME = }")
 FOLDER_DATASETS.mkdir(exist_ok=True, parents=True)
 logger.info(f"Folder for datasets to be created: {FOLDER_DATASETS.absolute()}")
 
@@ -98,7 +99,8 @@ logger.info(
 data
 
 # %% [markdown]
-# Make categorical index a normal string index (this lead to problems when selecting data using `loc` and grouping data as level of data could not easily be removed from MultiIndex)
+# Make categorical index a normal string index (this lead to problems when selecting data using `loc`
+# and grouping data as level of data could not easily be removed from MultiIndex)
 #
 # - see [blog](https://towardsdatascience.com/staying-sane-while-adopting-pandas-categorical-datatypes-78dbd19dcd8a)
 
@@ -160,7 +162,11 @@ mask = idx_all.duplicated(keep=False)
 duplicated_sample_idx = idx_all.loc[mask].sort_values()  # duplicated dumps
 duplicated_sample_idx
 
-#
+# %%
+META_DATA = Path(META_DATA)
+fname_duplicates = META_DATA.parent / (META_DATA.stem + '_duplicates.csv')
+df_meta.loc[duplicated_sample_idx.index].join(idx_all.to_frame('new_sample_id')).to_csv(fname_duplicates)
+
 # %%
 data_duplicates = data.loc[duplicated_sample_idx.index]  # .unstack()
 # data_duplicates.T.corr() # same samples are have corr. of 1
@@ -283,7 +289,7 @@ digits
 
 # %%
 embedding["instrument with N"] = embedding[["instrument serial number",
-                                            "count"]].apply(lambda s: f"{s[0]} (N={s[1]:{digits}d})", axis=1)
+                                            "count"]].apply(lambda s: f"{s.iloc[0]} (N={s.iloc[1]:{digits}d})", axis=1)
 embedding["instrument with N"] = embedding["instrument with N"].str.replace(
     'Exactive Series slot', 'Instrument')
 embedding
@@ -293,7 +299,7 @@ embedding
 
 # %%
 top_5 = counts_instrument["count"].nlargest(5)
-top_5 = top_5.index.levels[-1]
+top_5 = [x[-1] for x in top_5.index]
 embedding["instrument"] = embedding["instrument serial number"].apply(
     lambda x: x if x in top_5 else 'other')
 mask_top_5 = embedding["instrument"] != 'other'
@@ -503,3 +509,5 @@ logger.info(f"Saved: {fname}")
 
 # %%
 files_out
+
+# %%
