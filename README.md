@@ -34,7 +34,6 @@ Read metadata from single raw files using MaxQuant. See [README](workflows/metad
 
 create a new environment in case you want to have aseparate installations
 ```
-    xmltodict
 conda create -n hela_data -c conda-forge -c defaults python numpy matplotlib pandas plotly seaborn fastcore omegaconf ipywidgets tqdm pyyaml umap-learn scikit-learn openpyxl xmltodict
 # jupyterlab # maybe add a jupyterlab installation (depends on your setup)
 conda activate hela_data

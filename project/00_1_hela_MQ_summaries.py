@@ -7,9 +7,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.15.2
 #   kernelspec:
-#     display_name: hela_data
+#     display_name: Python 3 (ipykernel)
 #     language: python
-#     name: hela_data
+#     name: python3
 # ---
 
 # %% [markdown]
@@ -33,7 +33,7 @@ from config import FN_ALL_SUMMARIES
 print(f"{FN_ALL_SUMMARIES = }")
 
 # %% tags=["parameters"]
-FN_ALL_SUMMARIES: str = 'data/mq_summaries.csv'  # MqAllSummaries json
+FN_ALL_SUMMARIES: str = 'data/samples_selected_summaries.csv'  # MqAllSummaries json
 
 
 # %%

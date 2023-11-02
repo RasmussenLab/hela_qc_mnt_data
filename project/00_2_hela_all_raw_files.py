@@ -39,9 +39,9 @@
 # The ladder can be created using `find` on a server:
 #
 # ```bash
-# find . -name '*.raw' -exec ls -l {} \; > all_raw_files_dump_2021_10_27.txt
+# find . -name '*.raw' -exec ls -l {} \; > all_raw_files_dump_2021_10_29.txt
 # # alternative (changes the format)
-# find . -name '*.raw' -ls > all_raw_files_dump_2021_10_27.txt
+# find . -name '*.raw' -ls > all_raw_files_dump_2021_10_29.txt
 # ```
 #
 # which was executed in the
@@ -72,15 +72,12 @@ logger = logging.getLogger('hela_data')
 logger = setup_logger(logger, fname_base='00_2_hela_all_raw_files_ipynb')
 
 # %% tags=["parameters"]
-# FN_ALL_RAW_FILES = config.FOLDER_DATA / config.FN_ALL_RAW_FILES
 FN_ALL_RAW_FILES: str = config.FOLDER_DATA / 'all_raw_files_dump_2021_10_29.txt'
 FN_ALL_SUMMARIES: str = config.FN_ALL_SUMMARIES
-FN_PEPTIDE_INTENSITIES = config.FOLDER_DATA / 'df_intensities_N07285_M01000'
 
 # %%
 cfg.FN_ALL_RAW_FILES = FN_ALL_RAW_FILES
 cfg.FN_ALL_SUMMARIES = FN_ALL_SUMMARIES
-cfg.FN_PEPTIDE_INTENSITIES = FN_PEPTIDE_INTENSITIES
 
 # %%
 RawFile = namedtuple('RawFile', 'name path bytes')
@@ -156,8 +153,8 @@ if not data.index.is_unique:
     for idx, g in _data_to_remove.groupby(level=0):
         mask = ['\\MNT' in str(x) for x in g.path]
         assert len(mask) != sum(mask), f'All files in MNT subfolders: {idx}'
-        data_in_MNT_to_remove = data_in_MNT_to_remove.append(g[mask])
-        non_unique_remaining = non_unique_remaining.append(g[[x != True for x in mask]])
+        data_in_MNT_to_remove = pd.concat([data_in_MNT_to_remove, g[mask]])
+        non_unique_remaining = pd.concat([non_unique_remaining, g[[x != True for x in mask]]])
 
     del _data_to_remove, mask, idx, g
 
@@ -179,9 +176,9 @@ non_unique_remaining.loc[non_unique_remaining_counts.index.unique()]
 # %%
 mask_non_unique_remaining = non_unique_remaining.reset_index().duplicated(subset=['name', 'bytes'])
 mask_non_unique_remaining.index = non_unique_remaining.index
-data_to_remove = data_in_MNT_to_remove.append(
-    non_unique_remaining.loc[mask_non_unique_remaining]
-)
+data_to_remove = pd.concat([data_in_MNT_to_remove,
+                            non_unique_remaining.loc[mask_non_unique_remaining]]
+                           )
 data_to_remove
 
 # %%
@@ -322,10 +319,6 @@ widgets.VBox([w_data, out_sel])  # repr of class
 # - show scatter plot between sample size and number of quantified peptides
 
 # %%
-common_peptides = AnalyzePeptides.from_csv(cfg.FN_PEPTIDE_INTENSITIES)
-common_peptides = common_peptides.df.index
-
-# %%
 mq_summaries = MqAllSummaries(cfg.FN_ALL_SUMMARIES)
 
 # %% [markdown]
@@ -422,5 +415,3 @@ analysis.df.loc[analysis.df.index.duplicated(False)]  # keep the larger one
 
 # %%
 vars(cfg)  # return a dict which is rendered differently in ipython
-
-# %%

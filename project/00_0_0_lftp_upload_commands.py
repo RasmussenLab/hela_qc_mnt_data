@@ -230,7 +230,7 @@ df_summaries.to_csv(out_folder / 'mq_summaries.csv')
 del df_summaries
 
 # %% [markdown]
-# ## Put files on PRgIDE FTP server
+# ## Put files on PRIDE FTP server
 #
 # rename using `new_sample_id`
 

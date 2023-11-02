@@ -1,0 +1,29 @@
+name: hela_data
+channels:
+  - defaults
+  - conda-forge
+  - bioconda
+dependencies:
+  - seaborn=0.13
+  - matplotlib=3.8
+  - fastcore
+  - plotly
+  - pyyaml
+  - tqdm
+  - omegaconf
+  - umap-learn
+  - python=3.11
+  - ipywidgets
+  - pandas=2.1
+  - numpy=1.24
+  - ipykernel
+  - scikit-learn
+  - openpyxl
+  - jupyterlab
+  - xmltodict
+  - snakemake-minimal
+  - papermill
+  - snakefmt
+  - pip
+  - pip:
+      - .
