@@ -257,7 +257,7 @@ ax = seaborn.scatterplot(view,
                          palette='deep')
 _ = ax.legend(fontsize=6,
               title_fontsize=7,
-              markerscale=0.4,
+              markerscale=1.5,
               title='instrument label',
               loc='upper right',
               # alignment='left',
@@ -315,7 +315,7 @@ ax = seaborn.scatterplot(
     palette='deep')
 _ = ax.legend(fontsize=5,
               title_fontsize=6,
-              markerscale=0.4,
+              markerscale=1.5,
               title='instrument label',
               )
 ax.yaxis.set_major_formatter("{x:,.0f}")
