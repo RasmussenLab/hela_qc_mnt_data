@@ -38,6 +38,25 @@ df_meta['instrument_label'] = (
     + df_meta["instrument serial number"].str.split('#').str[-1]
 )
 
+# %%
+idx = ('Q Exactive HF Orbitrap',
+       'Q Exactive HF Orbitrap',
+       'Q Exactive Plus slot #1')
+
+_zipped = zip(thermo_raw_files.cols_instrument, idx)
+col, label = next(_zipped)
+mask = df_meta[col] == label
+for col, label in _zipped:
+    mask &= df_meta[col] == label
+
+assert mask.sum() == 156  # 156 samples with this instrument combination
+label = df_meta.loc[mask, 'instrument_label'].unique()
+assert len(label) == 1
+label = label[0]
+
+df_meta.loc[mask, 'instrument_label'] = label + '_Plus'
+
+# %% [markdown]
 # {k: k.replace('-Orbitrap_', ' ').replace('-', ' ').replace('_', ' ')
 #  for k in df_meta['instrument_label'].unique()}
 # further small changes applied manually
@@ -50,11 +69,13 @@ df_meta['instrument_label'] = (
 # Q Exactive MS:1001911
 # Orbitrap Fusion Lumos MS:1002732
 
+# %%
 instrument_labels = {'Q-Exactive-Orbitrap_1': 'Q Exactive 1',
                      'Q-Exactive-Plus-Orbitrap_1': 'Exactive Plus 1',
                      'Q-Exactive-HF-Orbitrap_206': 'Q Exactive HF 206',
                      'Q-Exactive-Plus-Orbitrap_143': 'Exactive Plus 143',
-                     'Q-Exactive-HF-Orbitrap_1': 'Q Exactive HF 1',
+                     'Q-Exactive-HF-Orbitrap_1': 'Q Exactive HF 1',  # was not unqiue
+                     'Q-Exactive-HF-Orbitrap_1_Plus': 'Q Exactive HF 1 Plus',
                      'Q-Exactive-HF-Orbitrap_147': 'Q Exactive HF 147',
                      'Q-Exactive-HF-Orbitrap_204': 'Q Exactive HF 204',
                      'Q-Exactive-HF-Orbitrap_148': 'Q Exactive HF 148',
