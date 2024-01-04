@@ -1,6 +1,6 @@
 # HeLa data quality control (QC) and maintenance (MNT) samples
 
-We provide 7,444 samples through the PRIDE archiv (PX------). 
+We provide 7,444 samples through the PRIDE archiv ([PXD042233](https://www.ebi.ac.uk/pride/archive/projects/PXD042233)). 
 
 Publication:
 > Webel, Henry, Yasset Perez-Riverol, Annelaura Bach Nielson, and Simon Rasmussen. 2023.
