@@ -50,8 +50,8 @@ Linked dumps in table format (FTP-Download):
 These were build using cleaned MaxQuant output tables, which are provided here:
 
 - [proteinGroups_single_dumps.zip](https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233/proteinGroups_single_dumps.zip) [2.5 GB] - 7,484 files (some duplicates)
-- [peptides_single_dumps.zip](https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233/peptides_single_dumps.zip) [9.4 GB]
-- [precursors_single_dumps.zip](https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233/precursors_single_dumps.zip) [7.1 GB]
+- [peptides_single_dumps.zip](https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233/peptides_single_dumps.zip) [9.4 GB] - 7,444 files
+- [precursors_single_dumps.zip](https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233/precursors_single_dumps.zip) [7.1 GB] - 7,444 files
 
 These contain the filtered, but not downsampled data for each samples. You might need the 
 metadata file to filter the data for your analysis.
@@ -86,12 +86,41 @@ def len_csv_files_in_archive(archiv_path: str) -> dict:
 
 
 stats = len_csv_files_in_archive(ARCHIVE)
-stats = pd.Series(stats) # contains some duplicates which were removed from aggregate data.
+stats = pd.Series(stats) # contains some duplicates which were removed from aggregated data.
 stats = stats.loc[meta.index]
 stats
 ```
 
-You can also downlaod it on the command line using `curl` (which is available for Windows, MacOS, and Linux distributions):
+|       |          |
+|:------|---------:|
+| count | 7444     |
+| mean  | 3833.45  |
+| std   |  698.794 |
+| min   | 1196     |
+| 25%   | 3390.75  |
+| 50%   | 3849     |
+| 75%   | 4181.25  |
+| max   | 5925     |
+
+So for the 7,444 selected samples there is a median of 3849 protein groups quantified per sample.
+
+### Download using python
+
+Download a file programaically using python:
+
+```python
+import urllib.request
+ARCHIVE = 'proteinGroups_single_dumps.zip'
+
+ftp_folder = 'https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233'
+file = 'pride_metadata.csv'
+
+urllib.request.urlretrieve(f'{ftp_folder}/{file}', f'{file}')
+urllib.request.urlretrieve(f'{ftp_folder}/{ARCHIVE}', f'{ARCHIVE}')
+```
+
+### download on the command line
+You can also downlaod the zip-archives on the command line using `curl` (which is available for Windows, MacOS, and Linux distributions):
 
 ```bash
 curl -O https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233/geneGroups_aggregated.zip
@@ -102,6 +131,7 @@ curl -O https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233/peptide
 curl -O https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233/precursors_single_dumps.zip
 ```
 
+Could be executed from a `.bat` or `.sh` script.
 
 ## Project
 
