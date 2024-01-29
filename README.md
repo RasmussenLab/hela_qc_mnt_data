@@ -3,12 +3,13 @@
 We provide 7,444 samples through the PRIDE archiv ([PXD042233](https://www.ebi.ac.uk/pride/archive/projects/PXD042233)). 
 
 Publication:
-> Webel, Henry, Yasset Perez-Riverol, Annelaura Bach Nielson, and Simon Rasmussen. 2023.
-> “Mass Spectrometry-Based Proteomics Data from Thousands of HeLa Control Samples.”
-> Research Square. https://doi.org/10.21203/rs.3.rs-3083547/v1.
+> Webel, Henry, Yasset Perez-Riverol, Annelaura Bach Nielson, and Simon Rasmussen (2024):
+> Mass spectrometry-based proteomics data from thousands of HeLa control samples. 
+> Sci Data 11, 112 https://doi.org/10.1038/s41597-024-02922-z
 
 The projocet folder contains notebooks for data processing of MaxQaunt text output folders
 which were created using the **workflows**, processing each file separately.
+
 ## Curate dumps
 
 We provide metadata from the raw files together with the MaxQuant summary statistics of 
