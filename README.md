@@ -10,7 +10,7 @@ Publication:
 The projocet folder contains notebooks for data processing of MaxQaunt text output folders
 which were created using the **workflows**, processing each file separately.
 
-## Curate dumps
+## Curated dumps
 
 We provide metadata from the raw files together with the MaxQuant summary statistics of 
 analzying the raw files in `pride_metadata.csv`. You can read it in python using pandas
