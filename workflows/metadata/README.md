@@ -3,6 +3,8 @@
 Get metadata from ThermoFischer proteomics raw files using
 [`ThermoRawFileParser`](https://github.com/compomics/ThermoRawFileParser)
 
+> :warning: On unix systems, make sure that mono is available
+
 ## Output
 
 - both json and txt data format into `jsons` and `txts` folder
@@ -13,24 +15,54 @@ Get metadata from ThermoFischer proteomics raw files using
 add a `config/files.yaml` in [config](config):
 
 ```yaml
-remote_in: erda:folder/path
 out_folder: metadata
-thermo_raw_file_parser_exe: mono path/to/ThermoRawFileParser/ThermoRawFileParser.exe
+out_csv: metadata_rawfiles.csv
+thermo_raw_file_parser_exe: mono /projects/rasmussen/people/kzl465/hela_qc_mnt_data/ThermoRawFileParser1.4.4/ThermoRawFileParser.exe
 files:
-- remote/path/file1.raw
-- remote/path/file2.raw
+  - 2013_04_03_16_54_Q-Exactive-Orbitrap_1
+  - 2013_04_03_17_47_Q-Exactive-Orbitrap_1
+ftp_folder: pride/data/archive/2023/12/PXD042233
+ftp_prefix: ftp://
+ftp_server: ftp.pride.ebi.ac.uk
+folder_raw: tmp_rawfiles
+excluded:
+- 
 ```
 
-The list of files is fetched from [`project/00_2_hela_all_raw_files.ipynb`](../../project/00_2_hela_all_raw_files.ipynb) notebook.
+### Add files on PRIDE to config file
 
+> Already done for PRIDE, but could be used to select a subset of the files.
+
+The list of files is extracted from [`pride_metadata.csv`](https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233/pride_metadata.csv).
+
+```python
+from pathlib import PurePosixPath as Path
+import yaml
+import pandas as pd
+pd.options.display.max_columns = 80
+
+ftp_folder = 'https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233'
+file = 'pride_metadata.csv'
+
+config_file = 'config/files.yaml'
+
+df = pd.read_csv(f'{ftp_folder}/{file}', index_col=0)
+
+with open(config_file) as f:
+    config = yaml.safe_load(f)
+
+config['files'] = df.index.to_list()
+
+with open(config_file, 'w') as f:
+    yaml.dump(config, f)
+```
 
 Then invoke the workflow with the list of config files
 
 ```bash
 # dry-run
-snakemake --configfiles config/ald_study/config.yaml config/ald_study/excluded.yaml -p -n
+snakemake --configfiles config/files.yaml config/excluded.yaml -p -n
 ```
-
 
 ### Excluded files
 
@@ -45,9 +77,11 @@ find  tmp -name '*.raw*' | awk 'sub(/^.{4}/," ? ")' >> config/excluded_$(date +"
 # potentially add these to the workflow exclusion files:
 find  tmp -name '*.raw*' | awk 'sub(/^.{4}/," ? ")' >> config/excluded.yaml
 # rm -r tmp/* # remove excluded files
+# add to files.yaml
 ```
 
-these files are ignored in the workflow (configured as a python set).
+these files are ignored in the workflow (configured as a python set) after adding these
+to the `config/files.yaml`.
 
 ## Setup
 

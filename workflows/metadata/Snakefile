@@ -1,6 +1,5 @@
 from pathlib import Path, PurePosixPath
-configfile: "config/other.yaml"
-configfile: "config/excluded.yaml"
+configfile: "config/files.yaml"
 
 files = [PurePosixPath(p) for p in config['files'] if p not in config['excluded']]
 files = [p.parent/ p.stem for p in files]
@@ -53,7 +52,7 @@ rule combine_json:
 
 rule parse_rawfile_metadata:
     input:
-        raw = config['folder_raw'] + '{file}.raw'
+        raw = config['folder_raw'] + '/{file}.raw'
     output:
         json = config['out_folder'] + "/jsons/{file}-metadata.json",
         txt = config['out_folder'] + "/txts/{file}-metadata.txt"
@@ -73,13 +72,12 @@ rule download:
     output:
         raw_local = temp(config['folder_raw'] + '/{file}.raw')
     params:
-        remote = config['remote_in'],
-        raw_remote = '{file}.raw'
-    threads:
-        1
+        ftp_location = f"{config['ftp_prefix']}{config['ftp_server']}/{config['ftp_folder']}/{{file}}.raw"
+    threads: 1
+    retries: 2
     resources:
         load=10 # erda: multiplexing allows 10 max concurrent sessions
     shell:
         """
-        sftp -B 258048 {params.remote} <<< 'get "{params.raw_remote}" "{output.raw_local}"' 
+        wget {params.ftp_location} -O {output.raw_local}
         """
