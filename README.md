@@ -145,8 +145,7 @@ The workflows folder in the repository contains snakemake workflows used for raw
 both for running MaxQuant over a large set of HeLa raw files 
 and ThermoRawFileParser on a list of raw files to extract their meta data.
 
-> Once the PRIDE archiv is public, one could start to adapt the workflows to fetch the data
-> from there.
+> [!NOTE] The metadata workflow now runs already with the PRIDE data.
 
 ### MaxQuant
 
@@ -160,8 +159,9 @@ Read metadata from single raw files using MaxQuant. See [README](workflows/metad
 ## Setup
 
 Create a new environment in case you want to have a separate installation for running 
+
 ```
-conda create -n hela_data -c conda-forge -c defaults python numpy matplotlib pandas plotly seaborn fastcore omegaconf ipywidgets tqdm pyyaml umap-learn scikit-learn openpyxl xmltodict
+conda create -n hela_data -c conda-forge -c defaults python numpy matplotlib pandas plotly seaborn fastcore omegaconf ipywidgets tqdm pyyaml umap-learn scikit-learn openpyxl xmltodict papermill
 # jupyterlab # maybe add a jupyterlab installation (depends on your setup)
 conda activate hela_data
 ```
