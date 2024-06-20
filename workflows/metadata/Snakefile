@@ -61,6 +61,8 @@ rule parse_rawfile_metadata:
     params:
         thermo_exe=config["thermo_raw_file_parser_exe"],
     threads: 1
+    envmodules:
+        "maxquant/2.0.3.0",
     resources:
         load=1,
     shell:
