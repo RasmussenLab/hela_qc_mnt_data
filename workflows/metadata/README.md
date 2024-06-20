@@ -3,7 +3,11 @@
 Get metadata from ThermoFischer proteomics raw files using
 [`ThermoRawFileParser`](https://github.com/compomics/ThermoRawFileParser)
 
-> :warning: On unix systems, make sure that mono is available
+> [!WARNING]
+> On unix systems, make sure that mono is available
+
+> [!NOTE] 
+> In case single raw file fail, delete these and try to download them again
 
 ## Output
 
@@ -93,6 +97,8 @@ to the `config/files.yaml`.
 sudo apt install mono-complete
 conda create -n snakemake snakemake
 conda activate snakemake
+pip install git+https://github.com/RasmussenLab/hela_qc_mnt_data.git # or locally cloned
+pip install papermill
 snakemake -n  # see job listing
 ```
 
