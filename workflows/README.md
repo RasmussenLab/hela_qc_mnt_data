@@ -1,4 +1,12 @@
-# Workflows
+# Workflows - general notes
+
+## Pride files
+
+Use e.g. `lftp` to connect to the PRIDE server and list all files in archive
+
+```
+lftp -c "open https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233; ls"
+```
 
 ## Snakemake
 Snakemake is a framework for execution of workflows on UNIX based systems.
@@ -8,10 +16,12 @@ but as an extension to Python rather than `C/C++`.
 
 ### Setup
 ```
-conda install -n snakemake snakemake pygraphviz
+conda install -n snakemake -c conda-forge -c bioconda snakemake pygraphviz
 ```
 
 ## Interacting with erda
+
+> Initially the data was on the University of Copenhagen's longterm storage. Now it is on PRIDE.
 
 ### Setup
 In your `~/.ssh/config` define a target, here the `SharedFolderName` is called by `hela`:
@@ -41,7 +51,7 @@ Checkout snakemake's [SFTP](https://snakemake.readthedocs.io/en/stable/snakefile
 functionality which uses [`pysftp`](https://pysftp.readthedocs.io/en/release_0.2.8/pysftp.html#pysftp.Connection).
 
 
-## Get file list from folder
+### Get file list from folder
 
 Once you have some files uploaded to erda, once in a while you could check which files
 you already did store there. Assuming you followed the previous setup step, using the

@@ -1,7 +1,10 @@
 tmp
+tmp_rawfiles
 jsons
 txts
 metadata
 config
 !config/ald_study
 rawfile_metadata*.json
+*.log
+*.out
