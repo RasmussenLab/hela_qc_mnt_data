@@ -2,8 +2,8 @@ out_folder: metadata
 out_csv: metadata_rawfiles.csv
 thermo_raw_file_parser_exe: mono /path/to/ThermoRawFileParser.exe
 files:
-  - 2013_04_03_16_54_Q-Exactive-Orbitrap_1
-  - 2013_04_03_17_47_Q-Exactive-Orbitrap_1
+  - 2013_04_03_16_54_Q-Exactive-Orbitrap_1.raw
+  - 2013_04_03_17_47_Q-Exactive-Orbitrap_1.raw
   - 2013_04_03_19_47_Q-Exactive-Orbitrap_1.raw
   - 2013_04_03_20_50_Q-Exactive-Orbitrap_1.raw
   - 2013_04_03_23_05_Q-Exactive-Orbitrap_1.raw
@@ -7451,4 +7451,4 @@ ftp_prefix: ftp://
 ftp_server: ftp.pride.ebi.ac.uk
 folder_raw: tmp_rawfiles
 excluded:
-- 
+  -

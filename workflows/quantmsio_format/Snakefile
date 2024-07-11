@@ -1,0 +1,61 @@
+from pathlib import Path, PurePosixPath
+
+
+configfile: "config/files.yaml"
+
+
+files = [PurePosixPath(p) for p in config["files"] if p not in config["excluded"]]
+files = [p.parent / p.stem for p in files]
+
+PREFIX_ID = int(config["subfolder_idx"])
+prefixes = [f.stem[:PREFIX_ID] for f in files]
+
+rule all:
+    input:
+        expand(config["folder_csv"] + "/{prefix}/{file}.csv", 
+        zip, prefix=prefixes, file=files),
+        expand(config["folder_csv"] + "/{prefix}/{file}.parquet", 
+        zip, prefix=prefixes, file=files),
+
+
+rule parse_evidence:
+    input:
+        evidence=config["folder_zips"] + "/{prefix}/{file}/evidence.txt",
+    output:
+        parquet=config["folder_csv"] + "/{prefix}/{file}.parquet",
+        csv=config["folder_csv"] + "/{prefix}/{file}.csv",
+    params:
+        unzipped_dir=config["folder_zips"] + "/{prefix}/{file}/{file}/"
+    shell:
+        """
+        python scripts/parse_evidence.py {input.evidence} {output.parquet} &&
+        rm -r {params.unzipped_dir}
+        """
+
+
+rule unzip:
+    input:
+        zip_file=config["folder_zips"] + "/{prefix}/{file}.zip",
+    output:
+        unzipped_file=config["folder_zips"] + "/{prefix}/{file}/evidence.txt",
+    params:
+        unzipped_dir=config["folder_zips"] + "/{prefix}"
+    shell:
+        """
+        unzip {input.zip_file} -d {params.unzipped_dir}
+        """
+
+
+rule download:
+    output:
+        raw_local=temp(config["folder_zips"] + "/{prefix}/{file}.zip"),
+    params:
+        ftp_location=f"{config['ftp_prefix']}{config['ftp_server']}/{config['ftp_folder']}/{{file}}.raw",
+    threads: 1
+    retries: 2
+    resources:
+        load=10,  # erda: multiplexing allows 10 max concurrent sessions
+    shell:
+        """
+        wget -nv {params.ftp_location} -O {output.raw_local}
+        """
