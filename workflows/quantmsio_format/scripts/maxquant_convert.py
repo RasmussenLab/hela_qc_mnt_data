@@ -4,18 +4,22 @@ Script is specific to the data. would need to extent modification encoding for
 other datasets.
 """
 import argparse
-# %%
+import zipfile
 from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
 
 
+# %%
 def parse_arguments():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(description='Convert Maxquant evidence table to quantmsio format')
     parser.add_argument('--input_file', '-i', type=str, help='Path to the input evidence.txt file')
-    parser.add_argument('--output_file', '-o', type=str, help='Path to the output parquet file')
+    parser.add_argument('--fname_out_parquet', '-o', type=str, help='Path to the output parquet file')
+    parser.add_argument('--fname_out_csv', '-ocsv', type=str,
+                        required=False,
+                        help='Path to the output csv file')
     return parser.parse_args()
 
 
@@ -116,7 +120,16 @@ def find_pos_of_oxidation(s: str) -> str:
     return ret
 
 
-def read_and_parse_evidence(filepath: str) -> pd.DataFrame:
+def open_from_zip_archive(zip_file, file_name):
+    """Open file from zip archive."""
+    with zipfile.ZipFile(zip_file) as z:
+        with z.open(file_name) as f:
+            df = pd.read_table(f, low_memory=False,
+                               usecols=use_columns + ['Potential contaminant'])
+    return df
+
+
+def read_and_parse_evidence(filepath: pd.DataFrame) -> pd.DataFrame:
     """Read and parse Maxquant evidence table to quantms.io format.
 
     Parameters
@@ -130,8 +143,7 @@ def read_and_parse_evidence(filepath: str) -> pd.DataFrame:
         pandas DataFrame with parsed data
     """
     filepath = Path(filepath)
-    df = pd.read_table(filepath, low_memory=False,
-                       usecols=use_columns + ['Potential contaminant'])
+    df = open_from_zip_archive(filepath, file_name=f'{filepath.stem}/evidence.txt')
     df = df.query('`Potential contaminant`!="+"')
     df = df.drop('Potential contaminant', axis=1)
     df = df.rename(columns=map_column_names)
@@ -154,48 +166,16 @@ def read_and_parse_evidence(filepath: str) -> pd.DataFrame:
     return df
 
 
-def main(fname, fname_out) -> None:
+def main(fname, fname_out_parquet, fname_out_csv=None) -> None:
     df = read_and_parse_evidence(fname)
-    df.to_parquet(fname_out, index=False)
-    df.to_pickle(fname_out.replace('.parquet', '.pkl'))
+    fname_out_parquet = Path(fname_out_parquet).with_suffix('.parquet')
+    df.to_parquet(fname_out_parquet, index=False)
+    if fname_out_csv:
+        fname_out_csv = Path(fname_out_csv).with_suffix('.csv')
+        df.to_csv(fname_out_csv)
 
 
 if __name__ == '__main__':
     args = parse_arguments()
     print(args)
-    main(args.input_file, args.output_file)
-
-# # %%
-
-# # %%
-# t = 'DNSTM[Oxidation]GYM[Oxidation]MAK'  # 5|8-UNIMOD:35'
-# t = '[Acetyl]-M[Oxidation]M[Oxidation]CGAPSATQPATAETQHIADQVR'  # ['0-UNIMOD:1', '1|2-UNIMOD:35']
-
-# find_pos_of_oxidation(t)
-
-
-# # %%
-# fname = 'DDA-LFQ-MQ/2020_06_29_14_29_Orbitrap-Exploris-480_MA10132C/evidence.txt'
-# df = read_and_parse_evidence(fname)
-# examples = df.astype({'modifications': 'string'}).groupby('modifications').sample(1).iloc[:, :3]
-# # df['modifications'] = df['peptidoform'].apply(find_pos_of_oxidation)
-# examples
-
-# # %%
-# df.loc[examples.index, :'peptidoform'].T.to_dict()
-
-# # %%
-# fact = 1024**3
-
-
-# def get_memory_usage_in_gb(df: pd.DataFrame) -> float:
-#     """Return memory usage in GB."""
-#     return df.memory_usage(deep=True).sum() / fact
-
-
-# # %%
-# df = df.convert_dtypes()
-# df
-# # %%
-# get_memory_usage_in_gb(df) * 7_444
-# # %%
+    main(args.input_file, args.fname_out_parquet)
