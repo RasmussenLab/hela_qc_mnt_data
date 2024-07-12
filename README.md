@@ -134,6 +134,19 @@ curl -O https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233/precurs
 
 Could be executed from a `.bat` or `.sh` script.
 
+### SDRF file
+
+```
+import pandas as pd
+pd.options.display.max_columns = 80
+
+ftp_folder = 'https://ftp.pride.ebi.ac.uk/pride/data/archive/2023/12/PXD042233'
+file = 'Experimental-Design.sdrf.tsv'
+
+df = pd.read_table(f'{ftp_folder}/{file}', index_col=0)
+df.sample(5, random_state=42).sort_index()
+```
+
 ## Project
 
 The project folder contains notebooks for data processing of MaxQaunt text output folders

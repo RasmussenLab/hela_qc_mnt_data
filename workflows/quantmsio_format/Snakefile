@@ -12,9 +12,9 @@ prefixes = [f.stem[:PREFIX_ID] for f in files]
 
 rule all:
     input:
-        expand(config["folder_csv"] + "/{prefix}/{file}.csv", 
+        expand(config["out_csv"] + "/{prefix}/{file}.csv", 
         zip, prefix=prefixes, file=files),
-        expand(config["folder_csv"] + "/{prefix}/{file}.parquet", 
+        expand(config["out_parquet"] + "/{prefix}/{file}.parquet", 
         zip, prefix=prefixes, file=files),
 
 
@@ -22,11 +22,14 @@ rule parse_evidence:
     input:
         archive=config["folder_zips"] + "/{prefix}/{file}.zip",
     output:
-        parquet=config["folder_csv"] + "/{prefix}/{file}.parquet",
-        csv=config["folder_csv"] + "/{prefix}/{file}.csv",
+        parquet=config["out_parquet"] + "/{prefix}/{file}.parquet",
+        csv=config["out_csv"] + "/{prefix}/{file}.csv",
+    conda:
+        # "quantms"
+        "envs/quantms.yaml"
     shell:
         """
-        python scripts/parse_evidence.py {input.archive} {output.parquet} {output.csv}
+        python scripts/maxquant_convert.py -i {input.archive} -o {output.parquet} -ocsv {output.csv}
         """
 
 rule download:

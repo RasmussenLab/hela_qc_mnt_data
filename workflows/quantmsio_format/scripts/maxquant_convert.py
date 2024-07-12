@@ -24,7 +24,7 @@ def parse_arguments():
 
 
 # peptide field schema for peptide records
-#
+# https://github.com/bigbio/quantms.io/blob/dev/docs/peptide.avsc
 fields_peptide = {
     "name": "peptide",
     "type": "record",
@@ -159,7 +159,7 @@ def read_and_parse_evidence(filepath: pd.DataFrame) -> pd.DataFrame:
     df['peptidoform'] = df['peptidoform'].str[1:-1]
     df['modifications'] = df['peptidoform'].apply(find_pos_of_oxidation)
     # rename sample_accession to filename (was changed for HeLa dataset)
-    df['sample_accession'] = f"{filepath.parent}.raw"
+    # df['sample_accession'] = f"{filepath.parent}.raw"
     # optimize dtypes
     # df = df.convert_dtypes()
     df = df.astype({'charge': 'Int8', 'number_of_psms': 'Int8'})
@@ -169,6 +169,7 @@ def read_and_parse_evidence(filepath: pd.DataFrame) -> pd.DataFrame:
 def main(fname, fname_out_parquet, fname_out_csv=None) -> None:
     df = read_and_parse_evidence(fname)
     fname_out_parquet = Path(fname_out_parquet).with_suffix('.parquet')
+    df['sample_accession'] = fname_out_parquet.stem
     df.to_parquet(fname_out_parquet, index=False)
     if fname_out_csv:
         fname_out_csv = Path(fname_out_csv).with_suffix('.csv')
@@ -178,4 +179,4 @@ def main(fname, fname_out_parquet, fname_out_csv=None) -> None:
 if __name__ == '__main__':
     args = parse_arguments()
     print(args)
-    main(args.input_file, args.fname_out_parquet)
+    main(args.input_file, args.fname_out_parquet, args.fname_out_csv)

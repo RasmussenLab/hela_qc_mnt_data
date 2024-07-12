@@ -1,0 +1,7 @@
+name: quantms
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - pyarrow
+  - pandas

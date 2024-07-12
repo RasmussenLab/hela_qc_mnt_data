@@ -1,6 +1,6 @@
-out_folder: parquet_files
+out_parquet: parquet_files
+out_csv: csv_files
 folder_zips: tmp_zip
-folder_csv: csv_files
 subfolder_idx: 4 # use the first x filename characters for subfolder placement of the parquet files
 files:
   - 2013_04_03_16_54_Q-Exactive-Orbitrap_1
