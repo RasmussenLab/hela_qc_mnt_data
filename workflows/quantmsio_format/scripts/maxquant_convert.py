@@ -158,11 +158,10 @@ def read_and_parse_evidence(filepath: pd.DataFrame) -> pd.DataFrame:
         df['peptidoform'] = df['peptidoform'].str.replace(k, v)
     df['peptidoform'] = df['peptidoform'].str[1:-1]
     df['modifications'] = df['peptidoform'].apply(find_pos_of_oxidation)
-    # rename sample_accession to filename (was changed for HeLa dataset)
-    # df['sample_accession'] = f"{filepath.parent}.raw"
-    # optimize dtypes
-    # df = df.convert_dtypes()
-    df = df.astype({'charge': 'Int8', 'number_of_psms': 'Int8'})
+    try:
+        df = df.astype({'charge': 'Int8', 'number_of_psms': 'Int8'})
+    except TypeError:
+        pass
     return df
 
 

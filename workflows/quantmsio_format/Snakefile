@@ -12,11 +12,19 @@ prefixes = [f.stem[:PREFIX_ID] for f in files]
 
 rule all:
     input:
-        expand(config["out_csv"] + "/{prefix}/{file}.csv", 
-        zip, prefix=prefixes, file=files),
-        expand(config["out_parquet"] + "/{prefix}/{file}.parquet", 
-        zip, prefix=prefixes, file=files),
+        config['out_parquet'] + "/PXD042233_peptides.parquet"
 
+
+rule merge:
+    input:
+        csv_files=expand(config["out_csv"] + "/{prefix}/{file}.csv", 
+        zip, prefix=prefixes, file=files),
+        parquet_files=expand(config["out_parquet"] + "/{prefix}/{file}.parquet", 
+        zip, prefix=prefixes, file=files),
+    output:
+        config['out_parquet'] + "/PXD042233_peptides.parquet"
+    script:
+        "scripts/merge_files.py"
 
 rule parse_evidence:
     input:
