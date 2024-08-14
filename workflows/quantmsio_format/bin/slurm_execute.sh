@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=10
 # The amount of RAM used by your task. Tasks are automatically assigned 15G
 # per CPU (set above) if this option is not set.
-##SBATCH --mem=15G
+#SBATCH --mem=256G
 # Set a maximum runtime in hours:minutes:seconds. No default limit.
 #SBATCH --time=03:00:00
 # Request a GPU on the GPU code. Use `--gres=gpu:a100:2` to request both GPUs.
