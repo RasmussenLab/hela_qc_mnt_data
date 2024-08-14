@@ -20,7 +20,6 @@ the script [scripts/maxquant_convert.py](scripts/maxquant_convert.py) is specifi
 - write the dat to a csv file (optional)
 
 
-Then the parsed files need to be aggregated into a joint `parquet` file along the 
-sample data information from the SDRF file.
-
+Then the parsed files are aggregated into a joint `parquet` file along the 
+sample data information from the SDRF file using: [scripts/merge_files.py](scripts/merge_files.py)
 
