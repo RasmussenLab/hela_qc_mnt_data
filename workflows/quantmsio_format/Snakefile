@@ -1,0 +1,55 @@
+from pathlib import Path, PurePosixPath
+
+
+configfile: "config/files.yaml"
+
+
+files = [PurePosixPath(p) for p in config["files"] if p not in config["excluded"]]
+files = [p.parent / p.stem for p in files]
+
+PREFIX_ID = int(config["subfolder_idx"])
+prefixes = [f.stem[:PREFIX_ID] for f in files]
+
+rule all:
+    input:
+        config['out_parquet'] + "/PXD042233_peptides.parquet"
+
+
+rule merge:
+    input:
+        csv_files=expand(config["out_csv"] + "/{prefix}/{file}.csv", 
+        zip, prefix=prefixes, file=files),
+        parquet_files=expand(config["out_parquet"] + "/{prefix}/{file}.parquet", 
+        zip, prefix=prefixes, file=files),
+    output:
+        config['out_parquet'] + "/PXD042233_peptides.parquet"
+    script:
+        "scripts/merge_files.py"
+
+rule parse_evidence:
+    input:
+        archive=config["folder_zips"] + "/{prefix}/{file}.zip",
+    output:
+        parquet=config["out_parquet"] + "/{prefix}/{file}.parquet",
+        csv=config["out_csv"] + "/{prefix}/{file}.csv",
+    conda:
+        # "quantms"
+        "envs/quantms.yaml"
+    shell:
+        """
+        python scripts/maxquant_convert.py -i {input.archive} -o {output.parquet} -ocsv {output.csv}
+        """
+
+rule download:
+    output:
+        raw_local=temp(config["folder_zips"] + "/{prefix}/{file}.zip"),
+    params:
+        ftp_location=f"{config['ftp_prefix']}{config['ftp_server']}/{config['ftp_folder']}/{{file}}.zip",
+    threads: 1
+    retries: 2
+    resources:
+        load=10,  # erda: multiplexing allows 10 max concurrent sessions
+    shell:
+        """
+        wget -nv {params.ftp_location} -O {output.raw_local}
+        """
